@@ -61,6 +61,25 @@ public class MParticleAutopilot extends Autopilot {
         // Restore the last registration token
         String token = airship.getPushManager().getRegistrationToken();
         MParticlePushProvider.getInstance().setRegistrationToken(token);
+
+        airship.getChannel().addChannelListener(new AirshipChannelListener() {
+            @Override
+            public void onChannelCreated(@NonNull String channelId) {
+                updatePlugin();
+            }
+
+            @Override
+            public void onChannelUpdated(@NonNull String channelId) {
+                updatePlugin();
+            }
+
+            private void updatePlugin() {
+                Object channelIdListener = MParticle.getInstance().getKitInstance(MParticle.ServiceProviders.URBAN_AIRSHIP);
+                if (channelIdListener != null) {
+                    ((UrbanAirshipKit.ChannelIdListener)channelIdListener).channelIdUpdated();
+                }
+            }
+        });
     }
 
     @Override
